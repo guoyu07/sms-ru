@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationChannels\SmscRu\Exceptions;
+namespace NotificationChannels\SmsRu\Exceptions;
 
 use Exception;
 use DomainException;

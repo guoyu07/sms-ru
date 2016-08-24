@@ -5,24 +5,24 @@ namespace NotificationChannel\SmscRu\Tests;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\SmscRu\SmscRuApi;
-use NotificationChannels\SmscRu\SmscRuChannel;
-use NotificationChannels\SmscRu\SmscRuMessage;
+use NotificationChannels\SmsRu\SmsRuApi;
+use NotificationChannels\SmsRu\SmsRuChannel;
+use NotificationChannels\SmsRu\SmsRuMessage;
 
-class SmscRuChannelTest extends TestCase
+class SmsRuChannelTest extends TestCase
 {
     /**
-     * @var SmscRuApi
+     * @var SmsRuApi
      */
     private $smsc;
 
     /**
-     * @var SmscRuMessage
+     * @var SmsRuMessage
      */
     private $message;
 
     /**
-     * @var SmscRuChannel
+     * @var SmsRuChannel
      */
     private $channel;
 
@@ -35,9 +35,9 @@ class SmscRuChannelTest extends TestCase
     {
         parent::setUp();
 
-        $this->smsc = Mockery::mock(SmscRuApi::class);
-        $this->channel = new SmscRuChannel($this->smsc);
-        $this->message = Mockery::mock(SmscRuMessage::class);
+        $this->smsc = Mockery::mock(SmsRuApi::class);
+        $this->channel = new SmsRuChannel($this->smsc);
+        $this->message = Mockery::mock(SmsRuMessage::class);
         $this->notification = Mockery::mock(Notification::class);
     }
 
@@ -54,13 +54,12 @@ class SmscRuChannelTest extends TestCase
         $notifiable = new Notifiable;
 
         $data = [
-            'mes'     => 'hello',
-            'charset' => 'utf-8',
+            'text'     => 'hello',
         ];
 
         $this->message->shouldReceive('toArray')->andReturn($data);
         $this->smsc->shouldReceive('send')->with('+1234567890', $data);
-        $this->notification->shouldReceive('toSmscRu')->with($notifiable)->andReturn($this->message);
+        $this->notification->shouldReceive('toSmsRu')->with($notifiable)->andReturn($this->message);
 
 
         $this->channel->send($notifiable, $this->notification);
@@ -69,8 +68,8 @@ class SmscRuChannelTest extends TestCase
     /** @test */
     public function it_does_not_send_a_message_when_notifiable_does_not_have_route_notification()
     {
-        $this->notification->shouldReceive('toSmscRu')->never();
-        $this->channel->send(new NotifiableWithoutRouteNotificationForSmscru, $this->notification);
+        $this->notification->shouldReceive('toSmsRu')->never();
+        $this->channel->send(new NotifiableWithoutRouteNotificationForSmsru, $this->notification);
     }
 }
 
@@ -82,7 +81,7 @@ class Notifiable
     }
 }
 
-class NotifiableWithoutRouteNotificationForSmscru extends Notifiable
+class NotifiableWithoutRouteNotificationForSmsru extends Notifiable
 {
     public function routeNotificationFor()
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace NotificationChannels\SmscRu;
+namespace NotificationChannels\SmsRu;
 
 use Illuminate\Contracts\Support\Arrayable;
 
-class SmscRuMessage implements Arrayable
+class SmsRuMessage implements Arrayable
 {
     /**
      * The phone number the message should be sent from.
@@ -74,8 +74,7 @@ class SmscRuMessage implements Arrayable
     public function toArray()
     {
         $params = [
-            'charset' => 'utf-8',
-            'mes'     => $this->content,
+            'text'     => $this->content,
         ];
 
         if (! empty($this->from)) {

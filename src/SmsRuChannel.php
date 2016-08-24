@@ -1,15 +1,15 @@
 <?php
 
-namespace NotificationChannels\SmscRu;
+namespace NotificationChannels\SmsRu;
 
 use Illuminate\Notifications\Notification;
 
-class SmscRuChannel
+class SmsRuChannel
 {
-    /** @var \NotificationChannels\SmscRu\SmscRuApi */
+    /** @var \NotificationChannels\SmsRu\SmsRuApi */
     protected $smsc;
 
-    public function __construct(SmscRuApi $smsc)
+    public function __construct(SmsRuApi $smsc)
     {
         $this->smsc = $smsc;
     }
@@ -20,18 +20,18 @@ class SmscRuChannel
      * @param  mixed  $notifiable
      * @param  \Illuminate\Notifications\Notification  $notification
      *
-     * @throws  \NotificationChannels\SmscRu\Exceptions\CouldNotSendNotification
+     * @throws  \NotificationChannels\SmsRu\Exceptions\CouldNotSendNotification
      */
     public function send($notifiable, Notification $notification)
     {
-        if (! $to = $notifiable->routeNotificationFor('smscru')) {
+        if (! $to = $notifiable->routeNotificationFor('smsru')) {
             return;
         }
 
-        $message = $notification->toSmscRu($notifiable);
+        $message = $notification->toSmsRu($notifiable);
 
         if (is_string($message)) {
-            $message = new SmscRuMessage($message);
+            $message = new SmsRuMessage($message);
         }
 
         $this->smsc->send($to, $message->toArray());

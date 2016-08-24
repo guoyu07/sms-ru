@@ -1,34 +1,31 @@
 <?php
 
-namespace NotificationChannels\SmscRu;
+namespace NotificationChannels\SmsRu;
 
 use DomainException;
 use GuzzleHttp\Client as HttpClient;
-use NotificationChannels\SmscRu\Exceptions\CouldNotSendNotification;
+use NotificationChannels\SmsRu\Exceptions\CouldNotSendNotification;
 
-class SmscRuApi
+class SmsRuApi
 {
     const FORMAT_JSON = 3;
 
     /** @var string */
-    protected $apiUrl = 'https://smsc.ru/sys/send.php';
+    protected $apiUrl = 'http://sms.ru/sms/send';
 
     /** @var HttpClient */
     protected $httpClient;
 
     /** @var string */
-    protected $login;
-
-    /** @var string */
-    protected $secret;
+    protected $apiId;
 
     /** @var string */
     protected $sender;
 
-    public function __construct($login, $secret, $sender)
+    public function __construct($apiId, $sender)
     {
-        $this->login = $login;
-        $this->secret = $secret;
+        $this->apiId = $apiId;
+
         $this->sender = $sender;
 
         $this->httpClient = new HttpClient([
@@ -48,22 +45,13 @@ class SmscRuApi
     public function send($recipient, $params)
     {
         $params = array_merge([
-            'phones' => $recipient,
-            'login'  => $this->login,
-            'psw'    => $this->secret,
-            'sender' => $this->sender,
-            'fmt'    => self::FORMAT_JSON,
+            'to' => $recipient,
+            'api_id'    => $this->apiId,
+            'from' => $this->sender
         ], $params);
 
         try {
             $response = $this->httpClient->post($this->apiUrl, ['form_params' => $params]);
-
-            $response = json_decode((string) $response->getBody(), true);
-
-            if (isset($response['error'])) {
-                throw new DomainException($response['error'], $response['error_code']);
-            }
-
             return $response;
         } catch (DomainException $exception) {
             throw CouldNotSendNotification::serviceRespondedWithAnError($exception);
