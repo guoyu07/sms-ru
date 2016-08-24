@@ -52,6 +52,10 @@ class SmsRuApi
 
         try {
             $response = $this->httpClient->post($this->apiUrl, ['form_params' => $params]);
+            $body = explode(PHP_EOL, $response->getBody()->getContents());
+            if (count($body) > 0 && (int) $body[0] !== 100) {
+                throw  new CouldNotSendNotification("Service responded with an error code: {$body[0]}");
+            }
             return $response;
         } catch (DomainException $exception) {
             throw CouldNotSendNotification::serviceRespondedWithAnError($exception);
