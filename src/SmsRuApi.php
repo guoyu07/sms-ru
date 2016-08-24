@@ -47,7 +47,7 @@ class SmsRuApi
         $params = array_merge([
             'to' => $recipient,
             'api_id'    => $this->apiId,
-            'from' => $this->sender
+            'from' => $this->sender,
         ], $params);
 
         try {
@@ -56,6 +56,7 @@ class SmsRuApi
             if (count($body) > 0 && (int) $body[0] !== 100) {
                 throw  new CouldNotSendNotification("Service responded with an error code: {$body[0]}");
             }
+
             return $response;
         } catch (DomainException $exception) {
             throw CouldNotSendNotification::serviceRespondedWithAnError($exception);

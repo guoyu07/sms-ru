@@ -10,6 +10,7 @@ class SmsRuServiceProvider extends ServiceProvider
     {
         $this->app->singleton(SmsRuApi::class, function () {
             $config = config('services.sms-ru');
+
             return new SmsRuApi($config['api_id'], $config['sender']);
         });
     }
